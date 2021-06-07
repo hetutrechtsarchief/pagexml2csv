@@ -1,40 +1,83 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
 import sys,csv,argparse,codecs,re
 import xml.etree.ElementTree as ET 
 
+tags = []
+
 def main(): 
-  argparser = argparse.ArgumentParser(description='PageXML TextLines to CSV') 
-  argparser.add_argument('infile', default=sys.stdin, type=argparse.FileType('r', encoding="utf-8"), nargs='?')
-  argparser.add_argument('outfile', default=sys.stdout, type=argparse.FileType('w', encoding="utf-8"), nargs='?')
-  args = argparser.parse_args()
 
-  with args.infile as file:
+  writer = csv.DictWriter(sys.stdout, fieldnames=["image","id","text","x","y","width","height"], quoting=csv.QUOTE_NONNUMERIC)
+  writer.writeheader()
+    
+  for filename in sys.argv[1:]:
+    with open(filename) as file:
 
-    xmlstring = file.read()
-    xmlstring = re.sub(r'\sxmlns="[^"]+"', '', xmlstring, count=1)
-    xml = ET.fromstring(xmlstring) 
-    items = []
+      xmlstring = file.read()
+      xmlstring = re.sub(r'\sxmlns="[^"]+"', '', xmlstring, count=1)
+      xml = ET.fromstring(xmlstring) 
+      items = []
 
-    for textline in xml.findall("./Page/TextRegion/TextLine"):
+      image = xml.find("Page").attrib["imageFilename"]
 
-      item = {}
-      item["id"] = textline.attrib["id"]
+      for textline in xml.findall("./Page/TextRegion/TextLine"):
 
-      text = textline.find("./TextEquiv/Unicode")
-      item["text"] = text.text if text!=None else ""
+        item = {}
 
-      coords = textline.find("./Coords")
-      item["coords"] = coords.attrib["points"] if coords!=None else ""
+        item["id"] = textline.attrib["id"]
 
-      baseline = textline.find("./Baseline")
-      item["baseline"] = baseline.attrib["points"] if baseline!=None else ""
+        item["image"] = image
 
-      items.append(item)
+        text = textline.find("./TextEquiv/Unicode")
+        item["text"] = text.text if text!=None else ""
 
-    writer = csv.DictWriter(args.outfile, fieldnames=["id","text","coords","baseline"], delimiter=',', quoting=csv.QUOTE_ALL, dialect='excel')
-    writer.writeheader()
-    writer.writerows(items)
+        coords = textline.find("./Coords")
+        coords = coords.attrib["points"] if coords!=None else ""
 
+        # split by space and comma
+        coords = [coord.split(",") for coord in coords.split(" ")]
+
+        # cast to int
+        coords = [(int(float(a)), int(float(b))) for a,b in coords]
+
+        # Usage example:
+        bounds = BoundingBox(coords)
+
+        item["x"] = bounds.minx
+        item["y"] = bounds.miny
+        item["width"] = bounds.width
+        item["height"] = bounds.height
+
+        writer.writerow(item)
+
+class BoundingBox(object):
+    """
+    A 2D bounding box
+    """
+    def __init__(self, points):
+        if len(points) == 0:
+            raise ValueError("Can't compute bounding box of empty list")
+        self.minx, self.miny = float("inf"), float("inf")
+        self.maxx, self.maxy = float("-inf"), float("-inf")
+        for x, y in points:
+            # Set min coords
+            if x < self.minx:
+                self.minx = x
+            if y < self.miny:
+                self.miny = y
+            # Set max coords
+            if x > self.maxx:
+                self.maxx = x
+            elif y > self.maxy:
+                self.maxy = y
+    @property
+    def width(self):
+        return self.maxx - self.minx
+    @property
+    def height(self):
+        return self.maxy - self.miny
+    def __repr__(self):
+        return "BoundingBox({}, {}, {}, {})".format(
+            self.minx, self.maxx, self.miny, self.maxy)
 
 if __name__ == "__main__": 
   main() 

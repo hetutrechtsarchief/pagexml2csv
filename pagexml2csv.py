@@ -18,7 +18,7 @@ def main():
 
       image = xml.find("Page").attrib["imageFilename"]
 
-      for textline in xml.findall("./Page/TextRegion/TextLine"):
+      for textline in xml.findall('.//TextLine'):
 
         item = {}
 

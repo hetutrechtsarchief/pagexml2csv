@@ -5,7 +5,6 @@ import xml.etree.ElementTree as ET
 tags = []
 
 def main(): 
-
   writer = csv.DictWriter(sys.stdout, fieldnames=["image","id","text","x","y","width","height"], quoting=csv.QUOTE_NONNUMERIC)
   writer.writeheader()
     
@@ -59,16 +58,11 @@ class BoundingBox(object):
         self.minx, self.miny = float("inf"), float("inf")
         self.maxx, self.maxy = float("-inf"), float("-inf")
         for x, y in points:
-            # Set min coords
-            if x < self.minx:
-                self.minx = x
-            if y < self.miny:
-                self.miny = y
-            # Set max coords
-            if x > self.maxx:
-                self.maxx = x
-            elif y > self.maxy:
-                self.maxy = y
+            self.minx = min(x,self.minx)
+            self.maxx = max(x,self.maxx)
+            self.miny = min(y,self.miny)
+            self.maxy = max(y,self.maxy)
+
     @property
     def width(self):
         return self.maxx - self.minx
@@ -76,8 +70,9 @@ class BoundingBox(object):
     def height(self):
         return self.maxy - self.miny
     def __repr__(self):
-        return "BoundingBox({}, {}, {}, {})".format(
-            self.minx, self.maxx, self.miny, self.maxy)
+        return "BoundingBox(minX={}, minY={}, maxX={}, maxY={})".format(
+            self.minx, self.miny, self.maxx, self.maxy)
+
 
 if __name__ == "__main__": 
   main() 

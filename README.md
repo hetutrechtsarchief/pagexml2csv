@@ -13,14 +13,14 @@ For a more complete implementation checkout [py-pagexml](https://omni-us.github.
         <Coords points="444,688 470,688 496,692 496,619 470,615 444,615"/>
         <Baseline points="444,664 470,664 496,668"/>
         <TextEquiv>
-            <Unicode>Datum</Unicode>
+            <Unicode>3 kinderen</Unicode>
         </TextEquiv>
     </TextLine>
 ```
 
 ## output
 ```csv
-"id","text","coords","baseline"
-"r2l2","Datum","444,688 470,688 496,692 496,619 470,615 444,615","444,664 470,664 496,668"
+"image","id","text","x","y","width","height"
+"NL-UtHUA_650_101_000181.jpg","r_1_1l1","Aantal kinderen:",87,327,377,77
 ...
 ```

@@ -18,7 +18,7 @@ def main():
 
       image = xml.find("Page").attrib["imageFilename"]
 
-      for textline in xml.findall('.//TextLine'):
+      for textline in xml.findall('.//TextLine'): # recursive findall with XPath to also allow TextLines within tables
 
         item = {}
 

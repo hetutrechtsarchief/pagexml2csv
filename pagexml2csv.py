@@ -38,7 +38,7 @@ def main():
         # cast to int
         coords = [(int(float(a)), int(float(b))) for a,b in coords]
 
-        # Usage example:
+        # calculate boundingbox from coords
         bounds = BoundingBox(coords)
 
         item["x"] = bounds.minx

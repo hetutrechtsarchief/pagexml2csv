@@ -13,7 +13,7 @@ For a more complete implementation checkout [py-pagexml](https://omni-us.github.
         <Coords points="444,688 470,688 496,692 496,619 470,615 444,615"/>
         <Baseline points="444,664 470,664 496,668"/>
         <TextEquiv>
-            <Unicode>Datum</Unicode>
+            <Unicode>3 kinderen</Unicode>
         </TextEquiv>
     </TextLine>
 ```

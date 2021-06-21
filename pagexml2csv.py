@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 tags = []
 
 def main(): 
-  writer = csv.DictWriter(sys.stdout, fieldnames=["image","id","text","x","y","width","height"], quoting=csv.QUOTE_NONNUMERIC)
+  writer = csv.DictWriter(sys.stdout, fieldnames=["image","imageWidth","imageHeight","id","text","x","y","width","height"], quoting=csv.QUOTE_NONNUMERIC)
   writer.writeheader()
     
   for filename in sys.argv[1:]:
@@ -17,6 +17,8 @@ def main():
       items = []
 
       image = xml.find("Page").attrib["imageFilename"]
+      imageWidth = xml.find("Page").attrib["imageWidth"]
+      imageHeight = xml.find("Page").attrib["imageHeight"]
 
       for textline in xml.findall('.//TextLine'): # recursive findall with XPath to also allow TextLines within tables
 
@@ -25,6 +27,8 @@ def main():
         item["id"] = textline.attrib["id"]
 
         item["image"] = image
+        item["imageWidth"] = int(imageWidth)
+        item["imageHeight"] = int(imageHeight)
 
         text = textline.find("./TextEquiv/Unicode")
         item["text"] = text.text if text!=None else ""

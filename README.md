@@ -3,6 +3,8 @@
 Simple Python script to extract TextLine data from PageXML files.
 
 For a more complete implementation checkout [py-pagexml](https://omni-us.github.io/pagexml/py-pagexml/): Python wrapper for the PageXML C++ library.
+Or [pagexml-tools](https://github.com/knaw-huc/pagexml) by KNAW for PageXML-tools contains functions for parsing and for a range of analysis tasks.
+
 
 ## input
 ```xml
